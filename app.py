@@ -34,5 +34,5 @@ def novi():
 
 @app.get("/version")
 def novi():
-    return {"versie": "0.0.7"}
+    return {"versie": "0.0.8"}
 

@@ -49,10 +49,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+
+#          Build en deploy
+
+
       - name: Build Docker image
+        env:
+                  COMMIT_HASH: ${{ github.sha }}
         run: |
-          docker build -t $IMAGE_NAME_LOWER:latest .
+          docker build -t $IMAGE_NAME_LOWER:latest -t $IMAGE_NAME_LOWER:$COMMIT_HASH .
 
       - name: Push Docker image
+        env:
+          COMMIT_HASH: ${{ github.sha }}
         run: |
           docker push $IMAGE_NAME_LOWER:latest
+          docker push $IMAGE_NAME_LOWER:$COMMIT_HASH
+
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.tokenjammer}}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${KUBE_CONFIG_DATA}" > $HOME/.kube/config
+
+      - name: Update Deployment with New Image
+        env:
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          kubectl set image deployment/moideploi makkelijk=$IMAGE_NAME_LOWER:$COMMIT_HASH -n mooienaam
