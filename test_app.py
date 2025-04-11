@@ -6,7 +6,7 @@ client = TestClient(app)
 def test_home():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == "Hello jongens en meisjes"
+    assert response.json() == "Hello meisjes en jongens"
 
 def test_novi():
     response = client.get("/novi")
