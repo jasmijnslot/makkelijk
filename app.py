@@ -32,3 +32,7 @@ def home():
 def novi():
     return {"message": "Hoi Novi"}
 
+@app.get("/version")
+def novi():
+    return {"versie": "0.0.7"}
+
